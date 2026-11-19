@@ -1,0 +1,102 @@
+{
+  "name": "nickys-flock",
+  "productName": "Nicky's Flock",
+  "version": "1.0.0",
+  "description": "Comic sheep that wander onto your screen. Herd them, feed them, shear them.",
+  "author": "Darius Rosendahl",
+  "license": "MIT",
+  "private": true,
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "selftest": "electron . --selftest",
+    "icons": "electron scripts/make-icons.js",
+    "dist": "electron-builder --mac --universal",
+    "dist:win": "electron-builder --win nsis --x64",
+    "site:build": "rm -rf site/play && cp -R renderer site/play && cp renderer/fonts/*.ttf site/fonts/ && mkdir -p site/download && cp dist/Nickys-Flock-1.0.0-mac.dmg dist/Nickys-Flock-Setup-1.0.0.exe site/download/",
+    "shots": "electron scripts/shots.js"
+  },
+  "devDependencies": {
+    "electron": "45.2.3",
+    "electron-builder": "26.18.0"
+  },
+  "build": {
+    "appId": "nl.doordarius.nickysflock",
+    "productName": "Nicky's Flock",
+    "copyright": "Made for Nicky by Darius",
+    "files": [
+      "main.js",
+      "preload.js",
+      "renderer/**/*",
+      "assets/**/*"
+    ],
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "mac": {
+      "category": "public.app-category.games",
+      "icon": "build/icon.png",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "universal"
+          ]
+        }
+      ],
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist",
+      "notarize": true,
+      "extendInfo": {
+        "LSUIElement": true
+      },
+      "artifactName": "Nickys-Flock-${version}-mac.${ext}"
+    },
+    "dmg": {
+      "title": "Nicky's Flock",
+      "iconSize": 112,
+      "contents": [
+        {
+          "x": 150,
+          "y": 190
+        },
+        {
+          "x": 390,
+          "y": 190,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ],
+      "window": {
+        "width": 540,
+        "height": 380
+      }
+    },
+    "win": {
+      "icon": "build/icon.png",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "Nickys-Flock-Setup-${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "runAfterFinish": true,
+      "createDesktopShortcut": false,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Nicky's Flock",
+      "deleteAppDataOnUninstall": false
+    }
+  },
+  "repository": "github:dariusrosendahl/nickys-flock",
+  "homepage": "https://flock.doordarius.nl"
+}

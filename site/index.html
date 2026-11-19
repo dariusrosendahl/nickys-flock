@@ -1,0 +1,513 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nicky's Flock</title>
+<meta name="description" content="Comic sheep that live along the bottom of your screen. Herd them with a sheepdog, feed them hay, shear them and knit them hats. Free for Mac and Windows.">
+<meta property="og:title" content="Nicky's Flock">
+<meta property="og:description" content="Comic sheep that live along the bottom of your screen. Free for Mac and Windows.">
+<meta property="og:image" content="https://flock.doordarius.nl/img/og.png">
+<meta property="og:url" content="https://flock.doordarius.nl/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+<style>
+/* Layout: one comic book page. Sky-blue gutter, cream paper panels with heavy ink and offset shadows,
+   a download banner up top, a three-panel strip, a playable panel, and grass at the bottom. */
+@font-face { font-family: 'Bangers'; src: url('fonts/Bangers-Regular.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Comic Neue'; src: url('fonts/ComicNeue-Bold.ttf') format('truetype'); font-weight: 700; font-display: swap; }
+
+:root {
+  --ink: #1d1b26;
+  --paper: #fff7e3;
+  --paper-dot: #f0dfb6;
+  --sky: #7cc8ff;
+  --sky-low: #cdeeff;
+  --sky-dot: rgba(29, 27, 38, 0.07);
+  --pop: #ffd23f;
+  --hot: #ff5a5f;
+  --pink: #ff7aa8;
+  --grass: #6cc04a;
+  --grass-dark: #4f9a33;
+  --fg: #1d1b26;
+  --fg-soft: #3d3a4a;
+  --font-display: 'Bangers', Impact, 'Arial Black', sans-serif;
+  --font-body: 'Comic Neue', 'Comic Sans MS', 'Chalkboard SE', 'Trebuchet MS', sans-serif;
+  --shadow: 6px 6px 0 var(--ink);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --sky: #1d2556;
+    --sky-low: #3b3d7c;
+    --sky-dot: rgba(255, 255, 255, 0.06);
+    --grass: #2f7a37;
+    --grass-dark: #225c29;
+    --fg: #fff7e3;
+    --fg-soft: #d9d3ea;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --sky: #1d2556;
+  --sky-low: #3b3d7c;
+  --sky-dot: rgba(255, 255, 255, 0.06);
+  --grass: #2f7a37;
+  --grass-dark: #225c29;
+  --fg: #fff7e3;
+  --fg-soft: #d9d3ea;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 1.55;
+  background-color: var(--sky);
+  background-image:
+    radial-gradient(var(--sky-dot) 1.4px, transparent 1.5px),
+    linear-gradient(180deg, var(--sky) 0%, var(--sky-low) 100%);
+  background-size: 9px 9px, 100% 100%;
+  background-attachment: fixed;
+  overflow-x: hidden;
+}
+img { max-width: 100%; height: auto; display: block; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--hot); outline-offset: 3px; }
+
+.wrap {
+  width: 100%;
+  max-width: 1160px;
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+/* ---------- top bar ---------- */
+.top { padding-block: 18px 8px; }
+.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.brand img { width: 40px; height: 40px; }
+.brand span { font-family: var(--font-display); font-size: 28px; letter-spacing: 0.04em; color: var(--fg); }
+.top-cta {
+  font-family: var(--font-display); font-size: 20px; letter-spacing: 0.06em; text-decoration: none;
+  color: var(--ink); background: var(--pop); border: 3px solid var(--ink); border-radius: 8px;
+  padding: 4px 14px; box-shadow: 3px 3px 0 var(--ink);
+}
+
+/* ---------- panels ---------- */
+.panel {
+  position: relative;
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--paper-dot) 1.2px, transparent 1.3px);
+  background-size: 8px 8px;
+  color: var(--ink);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: var(--shadow);
+}
+
+/* ---------- hero ---------- */
+.hero { padding-block: 22px 40px; }
+.hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  gap: 36px;
+  align-items: center;
+}
+.hero-copy { padding: 30px 30px 28px; transform: rotate(-0.6deg); }
+.sticker {
+  display: inline-block;
+  font-family: var(--font-display); font-size: 17px; letter-spacing: 0.08em;
+  background: var(--hot); color: #fff; border: 3px solid var(--ink); border-radius: 999px;
+  padding: 2px 14px; transform: rotate(-3deg); box-shadow: 2px 2px 0 var(--ink);
+}
+h1 {
+  margin: 14px 0 12px;
+  font-family: var(--font-display); font-weight: 400;
+  font-size: clamp(46px, 6.4vw, 84px); line-height: 0.95; letter-spacing: 0.02em;
+  text-wrap: balance;
+}
+h1 .mark { background: var(--pop); padding: 0 8px; box-shadow: 4px 4px 0 var(--ink); display: inline-block; transform: rotate(-1.5deg); }
+.lead { margin: 0 0 22px; font-size: 19px; color: #3d3a4a; max-width: 34ch; }
+
+.downloads { display: flex; flex-wrap: wrap; gap: 14px; }
+.dl {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  column-gap: 12px;
+  min-width: 0;
+  flex: 1 1 220px;
+  padding: 12px 16px 12px 14px;
+  text-decoration: none;
+  color: var(--ink);
+  background: #fff;
+  border: 4px solid var(--ink);
+  border-radius: 10px;
+  box-shadow: 5px 5px 0 var(--ink);
+  transition: transform 90ms ease, box-shadow 90ms ease;
+}
+.dl svg { grid-row: span 2; width: 34px; height: 34px; }
+.dl b { font-family: var(--font-display); font-weight: 400; font-size: 25px; letter-spacing: 0.04em; line-height: 1.05; }
+.dl small { font-size: 13.5px; color: #5a5566; line-height: 1.3; }
+.dl.is-primary { background: var(--pop); }
+a.dl:hover { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 var(--ink); }
+a.dl:active { transform: translate(4px, 4px); box-shadow: 1px 1px 0 var(--ink); }
+.dl.is-soon { background: #efeae0; color: #6b6676; box-shadow: 5px 5px 0 #8d879a; border-color: #6b6676; cursor: default; }
+.dl.is-soon svg { opacity: 0.6; }
+.chip {
+  position: absolute; top: -14px; right: -10px;
+  font-family: var(--font-display); font-size: 14px; letter-spacing: 0.06em;
+  background: var(--hot); color: #fff; border: 3px solid var(--ink); border-radius: 6px;
+  padding: 0 8px; transform: rotate(4deg);
+}
+.dl.is-soon .chip { background: #8d879a; border-color: #6b6676; }
+.yours { display: none; }
+.dl.is-yours .yours { display: block; background: var(--grass); }
+.fine { margin: 16px 0 0; font-size: 14px; color: #5a5566; }
+
+.hero-art { position: relative; padding: 18px 10px 26px 0; }
+.shot-frame { padding: 10px; transform: rotate(1.2deg); background: #fff; }
+.shot-frame img { border: 3px solid var(--ink); border-radius: 3px; aspect-ratio: 16 / 10; object-fit: cover; width: 100%; }
+.hero-art .chute {
+  position: absolute; width: 132px; top: -34px; right: -14px; z-index: 2;
+  animation: drift 6s ease-in-out infinite;
+  filter: drop-shadow(3px 4px 0 rgba(29, 27, 38, 0.25));
+}
+.burst {
+  position: absolute; z-index: 2;
+  display: grid; place-items: center;
+  width: 128px; height: 108px;
+  font-family: var(--font-display); font-size: 30px; letter-spacing: 0.04em; color: var(--ink);
+  --star: polygon(50% 0%, 61% 22%, 84% 8%, 79% 33%, 100% 38%, 82% 55%, 98% 78%, 72% 74%, 66% 100%, 50% 80%, 33% 100%, 28% 74%, 2% 80%, 18% 56%, 0% 36%, 22% 32%, 15% 7%, 39% 22%);
+  background: var(--ink);
+  clip-path: var(--star);
+  transform: rotate(-10deg);
+}
+.burst span {
+  position: absolute; inset: 7px;
+  display: grid; place-items: center;
+  padding-top: 4px;
+  background: var(--pop);
+  clip-path: var(--star);
+}
+.hero-art .burst { left: -34px; bottom: -10px; }
+
+/* ---------- ticker ---------- */
+.ticker-wrap { overflow: hidden; padding-block: 14px; }
+.ticker {
+  overflow: hidden;
+  background: var(--ink);
+  color: var(--pop);
+  border-block: 4px solid var(--ink);
+  transform: rotate(-1deg);
+  margin-inline: -20px;
+}
+.ticker-track {
+  display: flex; gap: 0; width: max-content;
+  font-family: var(--font-display); font-size: 26px; letter-spacing: 0.08em;
+  padding-block: 8px;
+  animation: tick 38s linear infinite;
+}
+.ticker-track span { padding-inline: 18px; white-space: nowrap; }
+.ticker-track span:nth-child(even) { color: #fff; }
+
+/* ---------- sections ---------- */
+section { padding-block: 56px 8px; }
+.section-head { display: flex; align-items: end; justify-content: space-between; gap: 20px; flex-wrap: wrap; margin-bottom: 26px; }
+h2 {
+  margin: 0;
+  font-family: var(--font-display); font-weight: 400; letter-spacing: 0.03em;
+  font-size: clamp(36px, 4.6vw, 56px); line-height: 1;
+  color: var(--fg);
+  text-shadow: 3px 3px 0 var(--hot);
+  text-wrap: balance;
+}
+.section-head p { margin: 0; max-width: 46ch; color: var(--fg-soft); }
+
+/* comic strip */
+.strip { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
+.frame { padding: 0; overflow: hidden; display: flex; flex-direction: column; }
+.frame:nth-child(1) { transform: rotate(-0.8deg); }
+.frame:nth-child(2) { transform: rotate(0.6deg) translateY(10px); }
+.frame:nth-child(3) { transform: rotate(-0.4deg); }
+.frame img { aspect-ratio: 820 / 430; object-fit: cover; object-position: 50% 100%; width: 100%; border-bottom: 4px solid var(--ink); }
+.caption {
+  position: absolute; top: 12px; left: 12px;
+  font-family: var(--font-display); font-size: 21px; letter-spacing: 0.06em;
+  background: var(--pop); border: 3px solid var(--ink); padding: 2px 10px;
+  box-shadow: 3px 3px 0 var(--ink);
+}
+.frame-text { padding: 16px 18px 18px; }
+.frame-text h3 { margin: 0 0 6px; font-family: var(--font-display); font-weight: 400; font-size: 27px; letter-spacing: 0.04em; line-height: 1.05; }
+.frame-text p { margin: 0; font-size: 16.5px; color: #3d3a4a; }
+
+/* details */
+.facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; padding: 0; }
+.fact { padding: 20px 22px; border-right: 3px dashed rgba(29, 27, 38, 0.25); border-bottom: 3px dashed rgba(29, 27, 38, 0.25); min-width: 0; }
+.fact:nth-child(3n) { border-right: 0; }
+.fact:nth-last-child(-n+3) { border-bottom: 0; }
+.fact dt { font-family: var(--font-display); font-size: 22px; letter-spacing: 0.05em; margin-bottom: 4px; }
+.fact dd { margin: 0; font-size: 16px; color: #3d3a4a; }
+
+/* playable panel */
+.play { padding: 10px; }
+.play-screen { position: relative; aspect-ratio: 16 / 9; border: 3px solid var(--ink); border-radius: 3px; overflow: hidden; background: #cdeeff; }
+.play-screen iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.play .burst { right: -30px; top: -40px; width: 112px; height: 94px; font-size: 26px; transform: rotate(9deg); }
+
+/* install */
+.install { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
+.install .panel { padding: 22px 24px; }
+.install h3 { margin: 0 0 10px; font-family: var(--font-display); font-weight: 400; font-size: 30px; letter-spacing: 0.04em; display: flex; align-items: center; gap: 10px; }
+.install h3 svg { width: 28px; height: 28px; }
+.install ol { margin: 0; padding-left: 22px; display: grid; gap: 8px; font-size: 16.5px; color: #3d3a4a; }
+.install .note { margin: 14px 0 0; font-size: 15px; color: #5a5566; }
+.say {
+  display: inline-block; font-family: var(--font-display); font-weight: 400; letter-spacing: 0.04em;
+  background: #fff; border: 2px solid var(--ink); border-radius: 6px; padding: 0 6px; font-size: 16px; color: var(--ink);
+}
+
+/* footer + meadow */
+.meadow { position: relative; margin-top: 72px; height: 150px; overflow: hidden; }
+.meadow::before {
+  content: ''; position: absolute; left: -5%; right: -5%; bottom: 0; height: 96px;
+  background: var(--grass);
+  border-top: 4px solid var(--ink);
+  border-radius: 50% 50% 0 0 / 34px 34px 0 0;
+}
+.trot {
+  position: absolute; bottom: 74px; left: 0; width: 112px;
+  animation: trot 26s linear infinite, bob 0.36s ease-in-out infinite alternate;
+}
+.trot.two { width: 92px; animation-delay: -11s, -0.2s; animation-duration: 31s, 0.32s; }
+footer { background: var(--grass); color: #fff7e3; padding-block: 0 34px; border-bottom: 0; }
+footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 24px; font-size: 16px; }
+footer a { color: #fff7e3; }
+footer p { margin: 0; }
+
+/* ---------- motion ---------- */
+@keyframes drift { 0%, 100% { transform: translate(0, 0) rotate(-4deg); } 50% { transform: translate(-10px, 12px) rotate(4deg); } }
+@keyframes tick { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@keyframes trot { from { left: -140px; } to { left: calc(100% + 40px); } }
+@keyframes bob { from { translate: 0 0; } to { translate: 0 -5px; } }
+@media (prefers-reduced-motion: reduce) {
+  .hero-art .chute, .ticker-track, .trot { animation: none; }
+  .trot { left: 12%; }
+  .trot.two { left: 64%; }
+  html { scroll-behavior: auto; }
+}
+
+/* ---------- responsive ---------- */
+@media (max-width: 920px) {
+  .hero-grid { grid-template-columns: minmax(0, 1fr); }
+  .hero-art { padding: 36px 6px 20px; }
+  .strip { grid-template-columns: minmax(0, 1fr); }
+  .frame:nth-child(n) { transform: none; }
+  .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .fact:nth-child(n) { border-right: 3px dashed rgba(29, 27, 38, 0.25); border-bottom: 3px dashed rgba(29, 27, 38, 0.25); }
+  .fact:nth-child(2n) { border-right: 0; }
+  .fact:nth-last-child(-n+2) { border-bottom: 0; }
+  .install { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 560px) {
+  body { font-size: 17px; }
+  .hero-copy { padding: 22px 18px 22px; }
+  .hero-art .chute { width: 96px; top: -30px; right: 0; }
+  .hero-art .burst { left: -6px; width: 104px; height: 88px; font-size: 25px; }
+  .facts { grid-template-columns: minmax(0, 1fr); }
+  .fact:nth-child(n) { border-right: 0; border-bottom: 3px dashed rgba(29, 27, 38, 0.25); }
+  .fact:last-child { border-bottom: 0; }
+  .play .burst { display: none; }
+  .play-screen { aspect-ratio: 4 / 5; }
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Nicky's Flock home"><img src="img/favicon.png" alt="" width="40" height="40"><span>Nicky's Flock</span></a>
+    <a class="top-cta" href="#download">Download</a>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero" id="download" aria-labelledby="hero-title">
+    <div class="wrap hero-grid">
+      <div class="panel hero-copy">
+        <span class="sticker">Free · Mac &amp; Windows</span>
+        <h1 id="hero-title">Comic sheep for your <span class="mark">desktop</span></h1>
+        <p class="lead">They arrive by parachute, wander along the bottom of your screen and baa now and then. Herd them into the pen with a sheepdog, feed them hay, shear them and knit them hats.</p>
+        <div class="downloads" id="downloads">
+          <a class="dl is-primary" data-os="win" href="download/Nickys-Flock-Setup-1.0.0.exe" download>
+            <svg viewBox="0 0 32 32" aria-hidden="true"><path fill="currentColor" d="M3 6.2 13.5 4.8v10.1H3zM14.8 4.6 29 2.6v12.3H14.8zM3 16.1h10.5v10.1L3 24.8zM14.8 16.1H29v12.3l-14.2-2z"/></svg>
+            <b>Download for Windows</b>
+            <small>Windows 10 and 11 · 64-bit · 116 MB</small>
+            <span class="chip yours">Your computer</span>
+          </a>
+          <a class="dl" data-os="mac" href="download/Nickys-Flock-1.0.0-mac.dmg" download>
+            <svg viewBox="0 0 32 32" aria-hidden="true"><path fill="currentColor" d="M22.3 16.9c0-3.3 2.7-4.9 2.8-5-1.5-2.2-3.9-2.5-4.7-2.6-2-.2-3.9 1.2-4.9 1.2s-2.6-1.2-4.3-1.1c-2.2 0-4.2 1.3-5.4 3.3-2.3 4-.6 9.9 1.7 13.1 1.1 1.6 2.4 3.4 4.1 3.3 1.6-.1 2.3-1.1 4.3-1.1s2.5 1.1 4.3 1 2.8-1.6 3.9-3.2c1.2-1.8 1.7-3.6 1.8-3.7-.1 0-3.6-1.4-3.6-5.2zM19.1 7.2c.9-1.1 1.5-2.6 1.3-4.1-1.3.1-2.9.9-3.8 2-.8.9-1.6 2.5-1.4 4 1.5.1 3-.8 3.9-1.9z"/></svg>
+            <b>Download for Mac</b>
+            <small>macOS 12 or later · Apple silicon and Intel · 225 MB</small>
+            <span class="chip yours">Your computer</span>
+          </a>
+        </div>
+        <p class="fine" id="fine">Version 1.0.0. No account, no ads, nothing to buy.</p>
+      </div>
+
+      <div class="hero-art">
+        <img class="chute" src="img/chute.png" alt="" width="150" height="200">
+        <div class="panel shot-frame">
+          <img src="shots/desktop.png" width="1280" height="800" alt="A desktop with a notes window and a browser window. Along the bottom, sheep graze, eat hay and stand in a small fenced pen with a sign that says Nicky's, while one sheep floats down on a parachute.">
+        </div>
+        <div class="burst" aria-hidden="true"><span>BAA!</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="ticker-wrap" aria-hidden="true"><div class="ticker">
+    <div class="ticker-track">
+      <span>Parachutes</span><span>Hay bales</span><span>A sheepdog</span><span>Bobble hats</span><span>Snip snip</span><span>A sheep called Kevin</span><span>Zzz</span><span>Baa</span>
+      <span>Parachutes</span><span>Hay bales</span><span>A sheepdog</span><span>Bobble hats</span><span>Snip snip</span><span>A sheep called Kevin</span><span>Zzz</span><span>Baa</span>
+    </div>
+  </div></div>
+
+  <section aria-labelledby="how-title">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="how-title">Life with a flock</h2>
+        <p>New sheep turn up every few minutes. What happens next is up to you.</p>
+      </div>
+      <div class="strip">
+        <article class="panel frame">
+          <span class="caption">1. Herd</span>
+          <img src="shots/herd.png" width="1640" height="1120" loading="lazy" alt="A black and white sheepdog barks WOOF while three sheep run toward the pen, shouting Run and Eek.">
+          <div class="frame-text">
+            <h3>Whistle for the dog</h3>
+            <p>The sheepdog follows your cursor and the sheep run away from it. Steer them into the pen and they stay put. A hungry sheep left outside may wander off.</p>
+          </div>
+        </article>
+        <article class="panel frame">
+          <span class="caption">2. Feed</span>
+          <img src="shots/feed.png" width="1640" height="1120" loading="lazy" alt="Sheep munching on hay bales. One says Best hay ever, another thinks Hay, please, and a new sheep drifts down on a parachute.">
+          <div class="frame-text">
+            <h3>Hand out hay</h3>
+            <p>Drop a bale anywhere and hungry sheep trot over to munch it. Put the hay in the pen and they follow it in.</p>
+          </div>
+        </article>
+        <article class="panel frame">
+          <span class="caption">3. Shear</span>
+          <img src="shots/shear.png" width="1640" height="1120" loading="lazy" alt="A freshly shorn pink sheep says Don't look while wool flies off it with a SNIP. Next to it, sheep in knitted bobble hats; one says Fancy.">
+          <div class="frame-text">
+            <h3>Shear and knit</h3>
+            <p>A woolly sheep gives up to three wool. Five wool knits a bobble hat, and you choose who gets to wear it.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="facts-title">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="facts-title">Good to know</h2>
+      </div>
+      <dl class="panel facts">
+        <div class="fact"><dt>Stays out of your way</dt><dd>Clicks pass through to your apps unless you point at a sheep. It never takes over the keyboard.</dd></div>
+        <div class="fact"><dt>Your pace</dt><dd>New sheep about every minute, every few minutes, or a few times an hour.</dd></div>
+        <div class="fact"><dt>Flock size</dt><dd>Small, medium or big: 6, 12 or 20 sheep at once.</dd></div>
+        <div class="fact"><dt>Remembers them</dt><dd>Names, hats and hunger survive a restart. A sheep might greet you when you come back.</dd></div>
+        <div class="fact"><dt>Quiet baas</dt><dd>Soft little sounds when you pet, shear or feed. One switch turns them off.</dd></div>
+        <div class="fact"><dt>Hide and seek</dt><dd>The menu bar or tray menu hides the flock for a while. They wait for you.</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section aria-labelledby="play-title">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="play-title">Meet the flock</h2>
+        <p>The same sheep as in the app, in a meadow of their own.</p>
+      </div>
+      <div class="panel play">
+        <div class="play-screen">
+          <iframe src="play/?preview=1" title="A playable meadow with Nicky's Flock" loading="lazy"></iframe>
+        </div>
+        <div class="burst" aria-hidden="true"><span>LIVE!</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="install-title">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="install-title">Installing</h2>
+      </div>
+      <div class="install">
+        <div class="panel">
+          <h3><svg viewBox="0 0 32 32" aria-hidden="true"><path fill="currentColor" d="M3 6.2 13.5 4.8v10.1H3zM14.8 4.6 29 2.6v12.3H14.8zM3 16.1h10.5v10.1L3 24.8zM14.8 16.1H29v12.3l-14.2-2z"/></svg>Windows</h3>
+          <ol>
+            <li>Open <b>Nickys-Flock-Setup-1.0.0.exe</b>.</li>
+            <li>Windows may say <span class="say">Windows protected your PC</span>. The app is new and has no Windows certificate yet. Choose <b>More info</b>, then <b>Run anyway</b>.</li>
+            <li>It installs for your account only, without admin rights, and starts right away.</li>
+            <li>The flock lives in the tray by the clock. A right-click or left-click there opens the menu.</li>
+          </ol>
+          <p class="note">Uninstall it like any other app, under Settings → Apps.</p>
+        </div>
+        <div class="panel">
+          <h3><svg viewBox="0 0 32 32" aria-hidden="true"><path fill="currentColor" d="M22.3 16.9c0-3.3 2.7-4.9 2.8-5-1.5-2.2-3.9-2.5-4.7-2.6-2-.2-3.9 1.2-4.9 1.2s-2.6-1.2-4.3-1.1c-2.2 0-4.2 1.3-5.4 3.3-2.3 4-.6 9.9 1.7 13.1 1.1 1.6 2.4 3.4 4.1 3.3 1.6-.1 2.3-1.1 4.3-1.1s2.5 1.1 4.3 1 2.8-1.6 3.9-3.2c1.2-1.8 1.7-3.6 1.8-3.7-.1 0-3.6-1.4-3.6-5.2zM19.1 7.2c.9-1.1 1.5-2.6 1.3-4.1-1.3.1-2.9.9-3.8 2-.8.9-1.6 2.5-1.4 4 1.5.1 3-.8 3.9-1.9z"/></svg>Mac</h3>
+          <ol>
+            <li>Open the downloaded disk image.</li>
+            <li>Drag <b>Nicky's Flock</b> into Applications and open it from there.</li>
+            <li>The flock lives in the menu bar, as a little sheep at the top of your screen.</li>
+          </ol>
+          <p class="note" id="mac-note">Signed by the developer and notarized by Apple, so it opens without warnings.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="meadow" aria-hidden="true">
+  <img class="trot" src="img/trot.png" alt="" width="140" height="100">
+  <img class="trot two" src="img/trot.png" alt="" width="140" height="100">
+</div>
+<footer>
+  <div class="wrap">
+    <p>Made for Nicky by Darius Rosendahl</p>
+    <p><a href="https://doordarius.nl">doordarius.nl</a></p>
+  </div>
+</footer>
+
+<script>
+  // Put the download for the visitor's own computer first and mark it.
+  (function () {
+    var ua = navigator.userAgent || '';
+    var plat = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || '';
+    var mobile = /Android|iPhone|iPad|iPod|Mobile/i.test(ua);
+    var os = /Win/i.test(plat + ua) ? 'win' : /Mac/i.test(plat + ua) ? 'mac' : null;
+    var box = document.getElementById('downloads');
+    if (mobile) {
+      document.getElementById('fine').textContent = "Version 1.0.0. The flock runs on Mac and Windows computers, so open this page there to download it.";
+      return;
+    }
+    if (!os) return;
+    var mine = box.querySelector('[data-os="' + os + '"]');
+    if (!mine) return;
+    box.insertBefore(mine, box.firstChild);
+    if (mine.tagName === 'A') {
+      box.querySelectorAll('.dl').forEach(function (d) { d.classList.remove('is-primary'); });
+      mine.classList.add('is-primary', 'is-yours');
+    }
+  })();
+</script>
+</body>
+</html>

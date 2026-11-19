@@ -1,0 +1,190 @@
+/* Comic overlay: transparent stage in the app, a meadow in the browser preview.
+   The toolbox is a small comic panel: cream paper, heavy ink, offset shadow. */
+@font-face {
+  font-family: 'Bangers';
+  src: url('fonts/Bangers-Regular.ttf') format('truetype');
+  font-display: block;
+}
+@font-face {
+  font-family: 'Comic Neue';
+  src: url('fonts/ComicNeue-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-display: block;
+}
+
+:root {
+  --ink: #1d1b26;
+  --paper: #fff7e3;
+  --paper-dot: #f1e2bd;
+  --pop: #ffd23f;
+  --pop-hot: #ff5a5f;
+  --sky-top: #7cc8ff;
+  --sky-bottom: #d6f1ff;
+  --hill-far: #bfe59a;
+  --hill: #93cf63;
+  --grass: #6cc04a;
+  --grass-dot: #58a83a;
+  --sun: #ffd23f;
+  --font-display: 'Bangers', Impact, 'Arial Black', sans-serif;
+  --font-body: 'Comic Neue', 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --sky-top: #1b2350;
+    --sky-bottom: #4a4a8c;
+    --hill-far: #3f6b4f;
+    --hill: #2f5a3d;
+    --grass: #2d6b35;
+    --grass-dot: #245a2b;
+    --sun: #fff2b0;
+  }
+}
+:root[data-theme="dark"] {
+  --sky-top: #1b2350;
+  --sky-bottom: #4a4a8c;
+  --hill-far: #3f6b4f;
+  --hill: #2f5a3d;
+  --grass: #2d6b35;
+  --grass-dot: #245a2b;
+  --sun: #fff2b0;
+}
+
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
+body.preview { background: var(--sky-bottom); }
+
+[hidden] { display: none !important; }
+
+#stage {
+  position: fixed;
+  inset: 0;
+  display: block;
+  touch-action: none;
+}
+
+.toolbox {
+  position: fixed;
+  right: max(18px, env(safe-area-inset-right, 0px));
+  bottom: 104px;
+  width: 272px;
+  padding: 10px 12px 10px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--ink);
+  font-family: var(--font-body);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--paper-dot) 1.2px, transparent 1.3px);
+  background-size: 7px 7px;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 5px 5px 0 var(--ink);
+  transform: rotate(-1deg);
+  touch-action: none;
+}
+body.preview .toolbox { bottom: auto; top: max(16px, env(safe-area-inset-top, 0px)); }
+
+.tb-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.tb-title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  color: var(--ink);
+  -webkit-text-stroke: 0;
+  text-shadow: 2px 2px 0 var(--pop);
+}
+.tb-fold {
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  background: var(--pop);
+  border: 2.5px solid var(--ink);
+  border-radius: 50%;
+  cursor: pointer;
+}
+.tb-fold span {
+  width: 10px;
+  height: 3px;
+  background: var(--ink);
+  border-radius: 2px;
+}
+.toolbox.folded .tb-fold span { box-shadow: none; }
+.toolbox.folded .tb-fold span::after {
+  content: '';
+  display: block;
+  width: 3px;
+  height: 10px;
+  margin: -3.5px auto 0;
+  background: var(--ink);
+  border-radius: 2px;
+}
+
+.tb-tools {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+.tool {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+  padding: 4px 2px 5px;
+  background: #ffffff;
+  border: 2.5px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 2px 2px 0 var(--ink);
+  font-family: var(--font-display);
+  font-size: 14px;
+  letter-spacing: 0.05em;
+  color: var(--ink);
+  cursor: grab;
+  touch-action: none;
+  transition: transform 80ms ease, box-shadow 80ms ease;
+}
+.tool canvas { width: 44px; height: 36px; display: block; pointer-events: none; }
+.tool span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.tool:hover { background: #fffbe9; transform: translateY(-1px); }
+.tool:active { transform: translate(2px, 2px); box-shadow: 0 0 0 var(--ink); cursor: grabbing; }
+.tool:focus-visible, .tb-fold:focus-visible { outline: 3px solid var(--pop-hot); outline-offset: 2px; }
+#tool-dog { cursor: pointer; }
+#tool-dog.on { background: var(--pop); }
+#tool-hat:disabled { opacity: 0.55; cursor: not-allowed; }
+#tool-hat:disabled span { font-size: 12px; letter-spacing: 0.02em; }
+
+.tb-stats {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 10px;
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.tb-stats b { font-family: var(--font-display); font-weight: 400; font-size: 17px; letter-spacing: 0.04em; }
+
+.toolbox.folded { width: auto; }
+.toolbox.folded .tb-tools, .toolbox.folded .tb-stats { display: none; }
+
+@media (max-width: 480px) {
+  .toolbox { width: min(272px, calc(100vw - 32px)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tool { transition: none; }
+}

@@ -1,0 +1,110 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>@font-face{font-family:'Bangers';src:url('../renderer/fonts/Bangers-Regular.ttf')}</style>
+</head><body>
+<canvas id="c"></canvas>
+<script src="../renderer/art.js"></script>
+<script>
+const A = window.Art;
+function appIcon() {
+  const c = document.createElement('canvas'); c.width = c.height = 1024;
+  const g = c.getContext('2d');
+  // macOS icon grid: 824px rounded square centred in 1024
+  g.save();
+  g.beginPath(); g.roundRect(100, 100, 824, 824, 185); g.clip();
+  const grad = g.createLinearGradient(0, 100, 0, 924);
+  grad.addColorStop(0, '#7cc8ff'); grad.addColorStop(1, '#c9ecff');
+  g.fillStyle = grad; g.fillRect(100, 100, 824, 824);
+  // comic sunburst rays
+  g.save(); g.translate(512, 470);
+  for (let i = 0; i < 18; i++) {
+    g.rotate(Math.PI / 9);
+    g.beginPath(); g.moveTo(0, 0); g.lineTo(-70, -700); g.lineTo(70, -700); g.closePath();
+    g.fillStyle = i % 2 ? 'rgba(255,255,255,0.28)' : 'rgba(255,255,255,0)'; g.fill();
+  }
+  g.restore();
+  // halftone in the lower sky
+  g.fillStyle = A.halftone(g, 'rgba(29,27,38,0.10)');
+  g.save(); g.scale(3, 3); g.fillRect(33, 160, 280, 150); g.restore();
+  // grass
+  g.fillStyle = '#6cc04a'; g.fillRect(100, 800, 824, 140);
+  g.lineWidth = 16; g.strokeStyle = A.C.ink;
+  g.beginPath(); g.moveTo(100, 800); g.lineTo(924, 800); g.stroke();
+  // shadow + sheep
+  g.fillStyle = 'rgba(29,27,38,0.18)';
+  g.beginPath(); g.ellipse(490, 806, 250, 30, 0, 0, Math.PI * 2); g.fill();
+  g.save(); g.translate(470, 800); g.scale(5.7, 5.7);
+  A.sheep(g, { x: 0, y: 0, dir: 1, scale: 1, wool: 1, seed: 7.3, phase: 0, stride: 0, headDown: 0, squash: 1, tilt: 0, t: 0, happy: 0.9, look: 0.5 });
+  g.restore();
+  g.restore();
+  // ink rim
+  g.beginPath(); g.roundRect(100, 100, 824, 824, 185);
+  g.lineWidth = 18; g.strokeStyle = A.C.ink; g.stroke();
+  return c.toDataURL('image/png');
+}
+function trayIcon(px) {
+  // template image: black silhouette, alpha only
+  const c = document.createElement('canvas'); c.width = c.height = px;
+  const g = c.getContext('2d');
+  const k = px / 22;
+  g.scale(k, k);
+  g.fillStyle = '#000';
+  const puffs = [[8, 9.5, 4], [11.5, 8, 4.2], [14.5, 9.5, 3.6], [10, 12, 4.2], [13.5, 12, 3.6], [6.2, 11.5, 3]];
+  g.beginPath();
+  for (const [x, y, r] of puffs) { g.moveTo(x + r, y); g.arc(x, y, r, 0, Math.PI * 2); }
+  g.fill();
+  // legs
+  g.lineWidth = 1.8; g.lineCap = 'round'; g.strokeStyle = '#000';
+  g.beginPath();
+  for (const x of [7.5, 10, 13, 15.2]) { g.moveTo(x, 14); g.lineTo(x, 19.5); }
+  g.stroke();
+  // head
+  g.save(); g.translate(18, 9.5); g.rotate(0.5);
+  g.beginPath(); g.ellipse(0, 0, 3.6, 2.7, 0, 0, Math.PI * 2); g.fill();
+  g.beginPath(); g.ellipse(-2.5, -2.6, 2.2, 1, -0.7, 0, Math.PI * 2); g.fill();
+  // eye punched out
+  g.globalCompositeOperation = 'destination-out';
+  g.beginPath(); g.arc(0.6, -0.9, 0.85, 0, Math.PI * 2); g.fill();
+  g.restore();
+  return c.toDataURL('image/png');
+}
+function trayColor(px) {
+  // full-colour sheep for the Windows tray
+  const c = document.createElement('canvas'); c.width = c.height = px;
+  const g = c.getContext('2d');
+  const k = px / 32;
+  g.scale(k, k);
+  g.save(); g.translate(13, 29); g.scale(0.31, 0.31);
+  A.sheep(g, { x: 0, y: 0, dir: 1, scale: 1, wool: 0.85, seed: 7.3, phase: 0, stride: 0, headDown: 0, squash: 1, tilt: 0, t: 0, happy: 0, look: 0.5 });
+  g.restore();
+  return c.toDataURL('image/png');
+}
+function sprite(kind) {
+  // transparent cut-outs for the download page, drawn at 2x
+  const c = document.createElement('canvas');
+  const g = c.getContext('2d');
+  const base = { x: 0, y: 0, dir: 1, scale: 1, wool: 0.95, seed: 4.1, phase: 1.2, stride: 1, headDown: 0, squash: 1, tilt: 0, t: 0, happy: 0.9, look: 1 };
+  if (kind === 'chute') {
+    c.width = 300; c.height = 400;
+    g.scale(2, 2); g.translate(72, 182);
+    A.sheep(g, { ...base, chute: true, air: true, stride: 0, t: 0.4 });
+  } else {
+    c.width = 280; c.height = 200;
+    g.scale(2, 2); g.translate(64, 90);
+    A.sheep(g, { ...base, joy: true });
+  }
+  return c.toDataURL('image/png');
+}
+function favicon() {
+  const c = document.createElement('canvas'); c.width = c.height = 64;
+  const g = c.getContext('2d');
+  g.translate(29, 58); g.scale(0.62, 0.62);
+  A.sheep(g, { x: 0, y: 0, dir: 1, scale: 1, wool: 0.9, seed: 7.3, phase: 0, stride: 0, headDown: 0, squash: 1, tilt: 0, t: 0, happy: 0, look: 0.5 });
+  return c.toDataURL('image/png');
+}
+window.makeIcons = async () => {
+  await document.fonts.ready;
+  return { app: appIcon(), tray: trayIcon(22), tray2x: trayIcon(44), win: trayColor(32), win2x: trayColor(64), chute: sprite('chute'), trot: sprite('trot'), favicon: favicon() };
+};
+</script>
+</body></html>

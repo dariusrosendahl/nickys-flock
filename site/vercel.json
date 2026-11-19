@@ -1,0 +1,12 @@
+{
+  "cleanUrls": true,
+  "headers": [
+    { "source": "/download/(.*)", "headers": [
+      { "key": "Content-Disposition", "value": "attachment" },
+      { "key": "Cache-Control", "value": "public, max-age=3600" }
+    ] },
+    { "source": "/(shots|img|fonts)/(.*)", "headers": [
+      { "key": "Cache-Control", "value": "public, max-age=86400" }
+    ] }
+  ]
+}

@@ -1,0 +1,37 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+  /* A plain mock desktop (not anyone's real screen) with the transparent sheep overlay on top. */
+  html,body{margin:0;height:100%;overflow:hidden;font-family:-apple-system,"Helvetica Neue",sans-serif}
+  .wall{position:fixed;inset:0;background:radial-gradient(120% 90% at 20% 10%,#ffd6a5 0%,#f7a8b8 38%,#9b8cf0 70%,#5f6fd6 100%)}
+  .bar{position:fixed;top:0;left:0;right:0;height:26px;background:rgba(255,255,255,.55);backdrop-filter:blur(10px);display:flex;align-items:center;gap:18px;padding:0 14px;font-size:13px;font-weight:600;color:#1d1b26}
+  .bar .r{margin-left:auto;display:flex;gap:14px;align-items:center}
+  .bar img{height:18px}
+  .win{position:fixed;background:#fff;border-radius:12px;box-shadow:0 18px 50px rgba(30,20,60,.35);overflow:hidden}
+  .win .t{height:30px;background:#f1f0f4;display:flex;align-items:center;gap:7px;padding:0 12px}
+  .win .t i{width:12px;height:12px;border-radius:50%;display:block}
+  .win .t i:nth-child(1){background:#ff5f57}.win .t i:nth-child(2){background:#febc2e}.win .t i:nth-child(3){background:#28c840}
+  .notes{left:90px;top:90px;width:430px;height:420px}
+  .notes .b{padding:18px 22px;font-size:15px;line-height:1.7;color:#333}
+  .notes h3{margin:0 0 6px;font-size:20px}
+  .notes li.done{text-decoration:line-through;color:#999}
+  .site{left:560px;top:70px;width:780px;height:520px}
+  .site .b{padding:26px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .site .b div{height:120px;border-radius:10px;background:#ececf3}
+  .site .b div.h{grid-column:1/3;height:46px;background:#e1e0ee}
+  .dock{position:fixed;left:50%;transform:translateX(-50%);bottom:6px;height:58px;width:520px;border-radius:18px;background:rgba(255,255,255,.4);backdrop-filter:blur(10px);display:flex;gap:10px;align-items:center;justify-content:center}
+  .dock b{width:44px;height:44px;border-radius:11px;display:block}
+  iframe{position:fixed;left:0;right:0;top:26px;bottom:72px;width:100%;height:calc(100% - 98px);border:0;background:transparent}
+</style></head>
+<body>
+<div class="wall"></div>
+<div class="bar"><span></span><span>Notes</span><span>File</span><span>Edit</span><span>View</span>
+  <span class="r"><img src="../assets/trayTemplate@2x.png" alt=""><span>Thu 21:40</span></span></div>
+<div class="win notes"><div class="t"><i></i><i></i><i></i></div><div class="b">
+  <h3>Saturday</h3><ul>
+  <li class="done">Buy oat milk</li><li>Call grandma</li><li class="done">Water the plants</li><li>Feed the sheep (again)</li><li>Find out who named a sheep Kevin</li></ul></div></div>
+<div class="win site"><div class="t"><i></i><i></i><i></i></div><div class="b"><div class="h"></div><div></div><div></div><div></div><div></div></div></div>
+<div class="dock"><b style="background:#5ac8fa"></b><b style="background:#ffcc00"></b><b style="background:#34c759"></b><b style="background:#ff9500"></b><b style="background:#af52de"></b><b style="background:#ff3b30"></b><b style="background:#1d1b26"></b></div>
+<iframe id="ov" allowtransparency="true"></iframe>
+<script>document.getElementById('ov').src='../renderer/index.html?preview=1&bg=none&theme=light&demo=desk';</script>
+</body></html>

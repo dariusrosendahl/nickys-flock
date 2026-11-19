@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:">
+  <title>Nicky's Flock</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <canvas id="stage" aria-label="Sheep on the screen"></canvas>
+
+  <aside id="toolbox" class="toolbox" aria-label="Sheep tools">
+    <header class="tb-head">
+      <span class="tb-title">Nicky's Flock</span>
+      <button id="tool-fold" class="tb-fold" type="button" aria-expanded="true" aria-label="Fold the toolbox" title="Fold">
+        <span aria-hidden="true"></span>
+      </button>
+    </header>
+    <div class="tb-tools">
+      <button id="tool-hay" class="tool" type="button" title="Drag hay onto the screen"><canvas aria-hidden="true"></canvas><span>Hay</span></button>
+      <button id="tool-shears" class="tool" type="button" title="Drag onto a woolly sheep"><canvas aria-hidden="true"></canvas><span>Shears</span></button>
+      <button id="tool-dog" class="tool" type="button" aria-pressed="false" title="Whistle for the sheepdog"><canvas aria-hidden="true"></canvas><span>Dog</span></button>
+      <button id="tool-hat" class="tool" type="button" title="Drag onto a sheep (costs 5 wool)"><canvas aria-hidden="true"></canvas><span>Hat</span></button>
+    </div>
+    <p class="tb-stats">
+      <span><b id="stat-sheep">0</b> sheep</span>
+      <span><b id="stat-pen">0</b> in the pen</span>
+      <span><b id="stat-wool">0</b> wool</span>
+    </p>
+  </aside>
+
+  <script src="art.js"></script>
+  <script src="sound.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

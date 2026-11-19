@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.signing/
+*.p12
+.DS_Store
+# site: secrets, Vercel link, installers (published as GitHub release assets) and the generated demo copy
+site/.env*
+site/.vercel/
+site/download/
+site/play/
